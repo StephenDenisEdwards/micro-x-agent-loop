@@ -48,5 +48,6 @@ function prompt(): void {
   });
 }
 
-console.log("micro-x-agent-loop (type 'exit' to quit)\n");
+console.log("micro-x-agent-loop (type 'exit' to quit)");
+console.log(`Tools: ${builtinTools.map((t) => t.name).join(", ")}\n`);
 prompt();

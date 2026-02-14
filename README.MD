@@ -25,7 +25,54 @@ This project begins as a minimal agent loop — the core cycle of perceiving, re
 
 ## Getting Started
 
-Coming soon.
+### Prerequisites
+
+- Node.js >= 20
+- An Anthropic API key ([get one here](https://console.anthropic.com/))
+
+### Installation
+
+```bash
+git clone https://github.com/StephenDenisEdwards/micro-x-agent-loop.git
+cd micro-x-agent-loop
+npm install
+```
+
+### Configuration
+
+Create a `.env` file in the project root with your Anthropic API key:
+
+```
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+```
+
+### Run
+
+```bash
+npm run build
+npm start
+```
+
+You'll see the available tools listed on startup, then a `you>` prompt. Type `exit` or `quit` to stop.
+
+## Example Prompts
+
+```
+you> What files are in the current directory?
+you> Read package.json and tell me the version
+you> Create a file called hello.txt that says "Hello World"
+you> Find remote software engineer jobs in New York
+you> Search for entry level data analyst jobs posted this week
+```
+
+## Available Tools
+
+| Tool | Description |
+|------|-------------|
+| `bash` | Execute shell commands |
+| `read_file` | Read file contents |
+| `write_file` | Write content to a file |
+| `linkedin_jobs` | Search LinkedIn job postings |
 
 ## License
 
