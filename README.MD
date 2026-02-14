@@ -40,11 +40,17 @@ npm install
 
 ### Configuration
 
-Create a `.env` file in the project root with your Anthropic API key:
+Create a `.env` file in the project root:
 
 ```
 ANTHROPIC_API_KEY=sk-ant-your-key-here
+
+# Gmail integration (optional)
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
 ```
+
+To use the Gmail tools you need a Google Cloud project with the Gmail API enabled and an OAuth 2.0 Client ID (type "Desktop app" or "Web application" with `http://localhost:3000/oauth2callback` as a redirect URI). On first use the agent will open a browser window for you to authorize access.
 
 ### Run
 
@@ -57,12 +63,30 @@ You'll see the available tools listed on startup, then a `you>` prompt. Type `ex
 
 ## Example Prompts
 
+### Files & Shell
+
 ```
 you> What files are in the current directory?
 you> Read package.json and tell me the version
 you> Create a file called hello.txt that says "Hello World"
+```
+
+### LinkedIn Jobs
+
+```
 you> Find remote software engineer jobs in New York
 you> Search for entry level data analyst jobs posted this week
+```
+
+### Gmail
+
+```
+you> Check my inbox for unread emails
+you> Search my email for messages from alice@example.com in the last week
+you> Find emails with subject "invoice" received this month
+you> Read email ID 18f3a... and summarize it
+you> Send an email to bob@example.com with subject "Meeting tomorrow" saying I'll be 10 minutes late
+you> Show me all starred emails from the last 3 days
 ```
 
 ## Available Tools
@@ -73,6 +97,10 @@ you> Search for entry level data analyst jobs posted this week
 | `read_file` | Read file contents |
 | `write_file` | Write content to a file |
 | `linkedin_jobs` | Search LinkedIn job postings |
+| `linkedin_job_detail` | Fetch full description for a LinkedIn job URL |
+| `gmail_search` | Search Gmail using Gmail search syntax |
+| `gmail_read` | Read the full content of an email by message ID |
+| `gmail_send` | Send an email from your Gmail account |
 
 ## License
 

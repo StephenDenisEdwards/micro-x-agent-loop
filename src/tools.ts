@@ -1,7 +1,9 @@
 import { execFile } from "node:child_process";
 import * as fs from "node:fs/promises";
 import { createRequire } from "node:module";
+import * as cheerio from "cheerio";
 import type { Tool } from "./types.js";
+import { gmailSearchTool, gmailReadTool, gmailSendTool } from "./gmail.js";
 
 const require = createRequire(import.meta.url);
 
@@ -21,10 +23,13 @@ export const bashTool: Tool = {
   },
   execute(input) {
     const command = input.command as string;
+    const isWindows = process.platform === "win32";
+    const shell = isWindows ? "cmd.exe" : "bash";
+    const shellArgs = isWindows ? ["/c", command] : ["-c", command];
     return new Promise((resolve) => {
       execFile(
-        "bash",
-        ["-c", command],
+        shell,
+        shellArgs,
         { timeout: 30_000 },
         (error, stdout, stderr) => {
           if (error) {
@@ -167,9 +172,100 @@ export const linkedinJobsTool: Tool = {
   },
 };
 
+export const linkedinJobDetailTool: Tool = {
+  name: "linkedin_job_detail",
+  description:
+    "Fetch the full job specification/description from a LinkedIn job URL. Use this after linkedin_jobs to get complete details for a specific posting.",
+  inputSchema: {
+    type: "object",
+    properties: {
+      url: {
+        type: "string",
+        description:
+          "The LinkedIn job URL (e.g. from a linkedin_jobs search result)",
+      },
+    },
+    required: ["url"],
+  },
+  async execute(input) {
+    const url = input.url as string;
+    try {
+      const response = await fetch(url, {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+          Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          "Accept-Language": "en-US,en;q=0.5",
+        },
+      });
+
+      if (!response.ok) {
+        return `Error fetching job page: HTTP ${response.status}`;
+      }
+
+      const html = await response.text();
+      const $ = cheerio.load(html);
+
+      // Extract job title
+      const title =
+        $(".top-card-layout__title").text().trim() ||
+        $("h1").first().text().trim();
+
+      // Extract company name
+      const company =
+        $(".topcard__org-name-link").text().trim() ||
+        $(".top-card-layout__company-name").text().trim();
+
+      // Extract location
+      const location =
+        $(".topcard__flavor--bullet").text().trim() ||
+        $(".top-card-layout__bullet").text().trim();
+
+      // Extract job description - try multiple known selectors
+      const descriptionHtml =
+        $(".description__text").html() ||
+        $(".show-more-less-html__markup").html() ||
+        $(".decorated-job-posting__details").html() ||
+        "";
+
+      let description = "";
+      if (descriptionHtml) {
+        // Convert HTML to readable text: preserve line breaks for block elements
+        const desc$ = cheerio.load(descriptionHtml);
+        desc$("br").replaceWith("\n");
+        desc$("p, li, h1, h2, h3, h4, h5, h6").each((_i, el) => {
+          desc$(el).append("\n");
+        });
+        desc$("li").each((_i, el) => {
+          desc$(el).prepend("- ");
+        });
+        description = desc$.text().replace(/\n{3,}/g, "\n\n").trim();
+      }
+
+      if (!description) {
+        return "Could not extract job description from the page. LinkedIn may have blocked the request or the page structure has changed.";
+      }
+
+      const parts: string[] = [];
+      if (title) parts.push(`Title: ${title}`);
+      if (company) parts.push(`Company: ${company}`);
+      if (location) parts.push(`Location: ${location}`);
+      parts.push("", "--- Job Description ---", "", description);
+
+      return parts.join("\n");
+    } catch (err) {
+      return `Error fetching job details: ${(err as Error).message}`;
+    }
+  },
+};
+
 export const builtinTools: Tool[] = [
   bashTool,
   readFileTool,
   writeFileTool,
   linkedinJobsTool,
+  linkedinJobDetailTool,
+  gmailSearchTool,
+  gmailReadTool,
+  gmailSendTool,
 ];

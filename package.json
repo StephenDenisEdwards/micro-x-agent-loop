@@ -5,9 +5,9 @@
   "description": "A lightweight autonomous AI agent loop, starting simple and evolving toward a full-featured personal AI assistant.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "node node_modules/typescript/bin/tsc",
     "start": "node dist/index.js",
-    "dev": "tsc --watch"
+    "dev": "node node_modules/typescript/bin/tsc --watch"
   },
   "repository": {
     "type": "git",
@@ -26,7 +26,9 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.74.0",
+    "cheerio": "^1.2.0",
     "dotenv": "^17.3.1",
+    "googleapis": "^171.4.0",
     "linkedin-jobs-api": "^1.0.7"
   }
 }
