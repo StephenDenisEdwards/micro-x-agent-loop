@@ -1,0 +1,27 @@
+{
+  "name": "micro-x-agent-loop",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A lightweight autonomous AI agent loop, starting simple and evolving toward a full-featured personal AI assistant.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StephenDenisEdwards/micro-x-agent-loop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/StephenDenisEdwards/micro-x-agent-loop/issues"
+  },
+  "homepage": "https://github.com/StephenDenisEdwards/micro-x-agent-loop#readme",
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "typescript": "^5.9.3"
+  }
+}
