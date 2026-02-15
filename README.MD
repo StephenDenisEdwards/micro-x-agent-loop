@@ -78,6 +78,14 @@ you> Find remote software engineer jobs in New York
 you> Search for entry level data analyst jobs posted this week
 ```
 
+### Documents
+
+```
+you> Read my-cv.docx and list the key skills
+you> Read my-cv.docx and suggest improvements for a senior developer role
+you> Extract all work experience from documents/resume.docx as a bullet list
+```
+
 ### Gmail
 
 ```
@@ -87,6 +95,8 @@ you> Find emails with subject "invoice" received this month
 you> Read email ID 18f3a... and summarize it
 you> Send an email to bob@example.com with subject "Meeting tomorrow" saying I'll be 10 minutes late
 you> Show me all starred emails from the last 3 days
+
+Using my CV at 'documents/Stephen Edwards CV December 2025.docx', find JobServe emails from the last 7 days. For each job spec, write a 2–3 sentence suitability summary and a simple fit score out of 10
 ```
 
 ## Available Tools
@@ -94,7 +104,7 @@ you> Show me all starred emails from the last 3 days
 | Tool | Description |
 |------|-------------|
 | `bash` | Execute shell commands |
-| `read_file` | Read file contents |
+| `read_file` | Read file contents (supports `.docx`) |
 | `write_file` | Write content to a file |
 | `linkedin_jobs` | Search LinkedIn job postings |
 | `linkedin_job_detail` | Fetch full description for a LinkedIn job URL |

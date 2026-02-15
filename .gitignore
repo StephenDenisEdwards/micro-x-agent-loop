@@ -1,3 +1,7 @@
 node_modules/
 dist/
 .env
+.gmail-token.json
+.claude/
+*.docx
+JobServe_Analysis_Stephen_Edwards.md
