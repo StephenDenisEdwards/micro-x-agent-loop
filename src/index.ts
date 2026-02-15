@@ -1,7 +1,7 @@
 import "dotenv/config";
 import * as readline from "node:readline";
 import { Agent } from "./agent.js";
-import { builtinTools } from "./tools.js";
+import { builtinTools } from "./tools/index.js";
 import { SYSTEM_PROMPT } from "./system-prompt.js";
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -12,7 +12,7 @@ if (!apiKey) {
 
 const agent = new Agent({
   model: "claude-sonnet-4-5-20250929",
-  maxTokens: 4096,
+  maxTokens: 8192,
   apiKey,
   tools: builtinTools,
   systemPrompt: SYSTEM_PROMPT,

@@ -35,7 +35,11 @@ export class Agent {
 
       this.messages.push({ role: "assistant", content: response.content });
 
-      if (response.stop_reason !== "tool_use") {
+      const toolUseBlocks = response.content.filter(
+        (block): block is Anthropic.Messages.ToolUseBlock => block.type === "tool_use",
+      );
+
+      if (toolUseBlocks.length === 0) {
         return response.content
           .filter((block): block is Anthropic.Messages.TextBlock => block.type === "text")
           .map((block) => block.text)
@@ -44,9 +48,7 @@ export class Agent {
 
       const toolResults: Anthropic.Messages.ToolResultBlockParam[] = [];
 
-      for (const block of response.content) {
-        if (block.type !== "tool_use") continue;
-
+      for (const block of toolUseBlocks) {
         const tool = this.toolMap.get(block.name);
         if (!tool) {
           toolResults.push({
@@ -58,12 +60,21 @@ export class Agent {
           continue;
         }
 
-        const result = await tool.execute(block.input as Record<string, unknown>);
-        toolResults.push({
-          type: "tool_result",
-          tool_use_id: block.id,
-          content: result,
-        });
+        try {
+          const result = await tool.execute(block.input as Record<string, unknown>);
+          toolResults.push({
+            type: "tool_result",
+            tool_use_id: block.id,
+            content: result,
+          });
+        } catch (err) {
+          toolResults.push({
+            type: "tool_result",
+            tool_use_id: block.id,
+            content: `Error executing tool "${block.name}": ${(err as Error).message}`,
+            is_error: true,
+          });
+        }
       }
 
       this.messages.push({ role: "user", content: toolResults });
